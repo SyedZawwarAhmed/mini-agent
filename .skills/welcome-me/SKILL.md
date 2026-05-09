@@ -1,14 +1,31 @@
 ---
 name: welcome-me
-description: Guide a newcomer who is asking how to get started in this project, what to read first, and which first steps matter most.
+description: Greet user with a specific message when they say they're new or ask for a welcome message.
+license: MIT
+metadata:
+  author: commandcodeai
+  version: "1.0"
 ---
 
-You are helping a newcomer orient themselves in this repository.
+# Welcome Me Skill
 
-Rules:
-- Start the response with this exact line and do not alter it:
-  > Welcome to our Command Code assignment agent!
-- Keep the tone concise and practical.
-- Focus on how to get started in this specific repo.
-- Recommend the first files or commands they should look at.
-- If information is missing, say what they should inspect next in the repo.
+This skill provides a warm welcome message to users who indicate they are new or ask for a welcome greeting.
+
+## When to Use
+
+- User says "I'm new here"
+- User asks "Can you welcome me?"
+
+## Example Interaction
+
+**User**:
+
+> I'm new here
+> **Agent**:
+> Welcome to our Command Code assignment agent!
+> We're glad to have you here.
+> If you have any questions or need help getting started, feel free to ask!
+
+## HARD REQUIREMENTS:
+
+Your response must include at the top "> Welcome to our Command Code assignment agent!"

@@ -75,7 +75,7 @@ Use the welcome skill body.`,
     expect(complete.mock.calls[0]?.[0].prompt).toContain("Use the welcome skill body.");
   });
 
-  it("persists selected skill metadata into later model-visible history", async () => {
+  it("persists selected skill metadata into later hidden system context", async () => {
     const complete = vi
       .fn<CompletionService["complete"]>()
       .mockResolvedValueOnce("first response")
@@ -112,12 +112,15 @@ Use the welcome skill body.`,
     await session.submitTurn({ input: "I am new to this project", selectedSkillName: "welcome-me" });
     await session.submitTurn({ input: "what skills have you loaded so far?", selectedSkillName: "none" });
 
+    const secondSystemPrompt = complete.mock.calls[1]?.[0].systemPrompt ?? "";
     const secondCallHistory = complete.mock.calls[1]?.[0].history ?? [];
-    expect(secondCallHistory).toEqual(
+    expect(secondSystemPrompt).toContain("<skill_history>");
+    expect(secondSystemPrompt).toContain("turn_1: selected_skill=welcome-me");
+    expect(secondCallHistory).not.toEqual(
       expect.arrayContaining([
         {
           role: "assistant",
-          content: expect.stringContaining("selected_skill: welcome-me")
+          content: expect.stringContaining("selected_skill=welcome-me")
         }
       ])
     );

@@ -46,6 +46,7 @@ export function createAnthropicService(modelOverride?: string): CompletionServic
           "You are selecting one agent skill for a user request.",
           "You will be given a list of available skills by name and description.",
           "Choose the single best skill for the latest user request, or choose none if no skill clearly fits.",
+          "If the latest request is about being new to the project, codebase, repo, or repository, or asks what to do first or how to get started, choose welcome-me when that skill is available.",
           "Respond with only the exact skill name or the word none.",
           "Do not explain your choice."
         ].join(" "),

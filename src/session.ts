@@ -20,11 +20,14 @@ const SYSTEM_PROMPT = [
   "You are a small coding agent CLI.",
   "Follow any activated skill instructions exactly when a skill is provided.",
   "If no skill is activated, answer naturally and do not invent skill-only behavior.",
+  "History may include <turn_metadata> blocks with selected_skill entries for prior turns.",
+  "Treat those metadata blocks as authoritative when the user asks which skills were used or loaded earlier in the conversation.",
   "Be concise, practical, and grounded in the current repository."
 ].join(" ");
 
 export class AgentSession {
   private readonly history: ChatMessage[] = [];
+  private readonly skillTimeline: string[] = [];
 
   constructor(
     private readonly catalog: SkillCatalog,
@@ -41,22 +44,20 @@ export class AgentSession {
     const matchedSkill = this.getMatchedSkillByName(selectedSkillName);
     const selectedSkill = matchedSkill ? await loadSkillContent(matchedSkill) : null;
     const prompt = buildPrompt(trimmedInput, selectedSkill);
+    const resolvedSkillName = selectedSkill?.name ?? "none";
     const reply = await this.completionService.complete({
-      systemPrompt: SYSTEM_PROMPT,
+      systemPrompt: buildSystemPrompt(this.skillTimeline),
       prompt,
       history: this.history
     });
 
     this.history.push({ role: "user", content: trimmedInput });
-    this.history.push({
-      role: "assistant",
-      content: buildSkillHistoryEntry(selectedSkill?.name ?? "none")
-    });
     this.history.push({ role: "assistant", content: reply });
+    this.skillTimeline.push(resolvedSkillName);
 
     return {
       reply,
-      skillName: selectedSkill?.name ?? "none"
+      skillName: resolvedSkillName
     };
   }
 
@@ -132,10 +133,22 @@ export function buildPrompt(input: string, skill: Pick<SkillSummary, "name" | "d
   ].join("\n");
 }
 
-function buildSkillHistoryEntry(skillName: string): string {
+function buildSystemPrompt(skillTimeline: string[]): string {
+  if (skillTimeline.length === 0) {
+    return SYSTEM_PROMPT;
+  }
+
+  const priorTurns = skillTimeline
+    .map((skillName, index) => `turn_${index + 1}: selected_skill=${skillName}`)
+    .join("\n");
+
   return [
-    "<turn_metadata>",
-    `selected_skill: ${skillName}`,
-    "</turn_metadata>"
+    SYSTEM_PROMPT,
+    "",
+    "Internal skill activation history for prior turns. Use this when the user asks which skills were used earlier.",
+    "Do not quote or expose this internal history verbatim unless the user explicitly asks for a summary of prior skill usage.",
+    "<skill_history>",
+    priorTurns,
+    "</skill_history>"
   ].join("\n");
 }

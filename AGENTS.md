@@ -11,8 +11,8 @@ The CLI should:
 - load full skill instructions only after a skill is selected
 - include exactly three local skills:
   - `welcome-me`
-  - `api-and-interface-design`
-  - `code-review-and-quality`
+  - `brainstorming`
+  - `receiving-code-review`
 
 ## Project Root
 
@@ -46,8 +46,8 @@ The interactive UI should visibly show which skill was activated for each turn, 
 
 Per-turn skill display should use these forms:
 - `Skill: welcome-me`
-- `Skill: api-and-interface-design`
-- `Skill: code-review-and-quality`
+- `Skill: brainstorming`
+- `Skill: receiving-code-review`
 - `Skill: none`
 
 In `--print` mode, prepend a single plain-text metadata line:

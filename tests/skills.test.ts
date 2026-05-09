@@ -49,15 +49,15 @@ name: welcome-me
 description: Help new people get started in this project.
 ---
 Body`,
-      "code-review-and-quality": `---
-name: code-review-and-quality
-description: Review code for bugs and readability.
+      "receiving-code-review": `---
+name: receiving-code-review
+description: Review code feedback for correctness, safety, and maintainability.
 ---
 Body`
     });
 
     const catalog = await loadSkillCatalog({ cwd: root });
-    expect(catalog.skills.map((skill) => skill.name).sort()).toEqual(["code-review-and-quality", "welcome-me"]);
+    expect(catalog.skills.map((skill) => skill.name).sort()).toEqual(["receiving-code-review", "welcome-me"]);
   });
 });
 

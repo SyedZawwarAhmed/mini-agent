@@ -49,8 +49,8 @@ The interactive UI shows which skill matched on each turn, or `none` when nothin
 This repo includes bundled skills under `.skills/`:
 
 - `welcome-me`
-- `api-and-interface-design`
-- `code-review-and-quality`
+- `brainstorming`
+- `receiving-code-review`
 
 ## Demo Instructions
 
@@ -61,4 +61,3 @@ npm run dev -- "I'm new to this project, what should I do?"
 npm run dev -- --print "Review this JavaScript function for readability and bugs."
 npm run dev -- --print "What's the weather in Karachi?"
 ```
-
