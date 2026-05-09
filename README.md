@@ -15,6 +15,19 @@ Current bundled skills:
 - `brainstorming`
 - `receiving-code-review`
 
+## Prerequisites
+
+- Node.js 20+ and npm
+- An Anthropic API key
+
+## Get Started
+
+1. Install dependencies with `npm install`
+2. Copy the example env file with `cp .env.example .env`
+3. Replace `your_key_here` in `.env` with your Anthropic API key
+4. Run `npm run dev`
+5. In the prompt box, try: `I'm new to this project, what should I do?`
+
 ## Setup
 
 Install dependencies:
@@ -73,7 +86,6 @@ npm run dev -- --print "Can you review this code?"
 - The interactive UI shows the app name, model, and current working directory.
 - When a skill is used, the transcript shows an inline badge like `[skill used] welcome-me`.
 - If no skill is used, no skill badge is shown.
-- The `welcome-me` header is rendered prominently rather than dimmed.
 
 ## Skills
 
