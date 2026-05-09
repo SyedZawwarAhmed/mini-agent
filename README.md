@@ -1,4 +1,4 @@
-# Command Code Mini Agent
+# Mini Agent
 
 A small TypeScript CLI coding agent with local `SKILL.md`-based skill activation.
 

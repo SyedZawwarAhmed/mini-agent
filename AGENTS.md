@@ -1,4 +1,4 @@
-# Command Code Mini Agent
+# Mini Agent
 
 ## Project Goal
 

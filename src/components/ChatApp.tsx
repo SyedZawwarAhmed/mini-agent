@@ -80,7 +80,7 @@ export function ChatApp(props: {
 
   return (
     <Box flexDirection="column" paddingX={1} paddingY={0}>
-      <Text color="gray"># <Text bold color="white">Command Code Mini Agent</Text> <Text color="gray">v1.0.0</Text></Text>
+      <Text color="gray"># <Text bold color="white">Mini Agent</Text> <Text color="gray">v1.0.0</Text></Text>
       <Text color="gray"># model: <Text color="blue">{props.modelLabel}</Text> <Text color="gray">· anthropic</Text></Text>
       <Text color="gray"># {props.cwd}</Text>
 

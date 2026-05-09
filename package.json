@@ -1,5 +1,5 @@
 {
-  "name": "command-code-mini-agent",
+  "name": "mini-agent",
   "version": "1.0.0",
   "description": "A TypeScript CLI mini-agent with Ink and local SKILL.md-based skills.",
   "license": "ISC",
