@@ -138,22 +138,29 @@ Tests:
 npm run test
 ```
 
-## Demo Instructions
+## Submission Notes
 
-Use any of these prompts:
+### Time Spent
 
-```bash
-npm run dev -- "I'm new to this project, what should I do?"
-npm run dev -- --print "Review this function for readability and bugs."
-npm run dev -- --print "Help me brainstorm a clean API for a note-taking app."
-```
+It took me around 4-5 hours to plan, build and test this project.
 
-## Time Spent
-
-Fill this in before submission.
-
-## Challenges
+### Challenges
 
 - Getting skill selection and session behavior aligned with the intended UX without overbuilding a full agent runtime
 - Preserving prior skill usage in hidden context so the model can answer questions about earlier turns
-- Tuning the Ink UI to feel closer to the desired terminal style while keeping the implementation small
+
+### Demo Instructions
+
+Run command:
+
+```bash
+npm run dev
+```
+
+Example prompts:
+
+```bash
+I'm new to this project, what should I do?
+Can you review this function for readability and bugs?
+Help me brainstorm a clean API for a note-taking app.
+```
