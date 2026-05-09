@@ -45,6 +45,8 @@ ANTHROPIC_API_KEY=your_key_here
 ANTHROPIC_MODEL=claude-sonnet-4-5
 ```
 
+Or
+
 ```bash
 export ANTHROPIC_API_KEY=your_key_here
 ```
