@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import type { MessageParam, TextBlock } from "@anthropic-ai/sdk/resources/messages";
 
 export const DEFAULT_MODEL = "claude-sonnet-4-5";
 export const SKILL_SELECTION_SYSTEM_PROMPT = [
@@ -29,6 +30,17 @@ export interface CompletionService {
   selectSkill(input: SkillSelectionInput): Promise<string>;
 }
 
+function toAnthropicMessages(history: Array<{ role: "user" | "assistant"; content: string }>): MessageParam[] {
+  return history.map((message) => ({
+    role: message.role,
+    content: message.content
+  }));
+}
+
+function isTextBlock(block: Anthropic.ContentBlock): block is TextBlock {
+  return block.type === "text";
+}
+
 export function createAnthropicService(modelOverride?: string): CompletionService {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
@@ -54,10 +66,7 @@ export function createAnthropicService(modelOverride?: string): CompletionServic
         max_tokens: 32,
         system: SKILL_SELECTION_SYSTEM_PROMPT,
         messages: [
-          ...input.history.map((message) => ({
-            role: message.role,
-            content: message.content
-          })),
+          ...toAnthropicMessages(input.history),
           {
             role: "user",
             content: [
@@ -74,7 +83,7 @@ export function createAnthropicService(modelOverride?: string): CompletionServic
       });
 
       const text = response.content
-        .filter((block) => block.type === "text")
+        .filter(isTextBlock)
         .map((block) => block.text)
         .join("\n")
         .trim()
@@ -91,10 +100,7 @@ export function createAnthropicService(modelOverride?: string): CompletionServic
         max_tokens: 900,
         system: input.systemPrompt,
         messages: [
-          ...input.history.map((message) => ({
-            role: message.role,
-            content: message.content
-          })),
+          ...toAnthropicMessages(input.history),
           {
             role: "user",
             content: input.prompt
@@ -103,7 +109,7 @@ export function createAnthropicService(modelOverride?: string): CompletionServic
       });
 
       const text = response.content
-        .filter((block) => block.type === "text")
+        .filter(isTextBlock)
         .map((block) => block.text)
         .join("\n")
         .trim();
