@@ -1,6 +1,16 @@
 import Anthropic from "@anthropic-ai/sdk";
 
 export const DEFAULT_MODEL = "claude-sonnet-4-5";
+export const SKILL_SELECTION_SYSTEM_PROMPT = [
+  "You are selecting one agent skill for a user request.",
+  "You will be given a list of available skills by name and description.",
+  "Choose the single best skill for the latest user request, or choose none if no skill clearly fits.",
+  "Base the choice on the latest request, the prior chat history, and the provided skill metadata.",
+  "Only choose a skill when the request is clearly asking for the kind of help described by that skill.",
+  "Do not choose a project-onboarding skill for general learning requests about a technology, framework, language, or topic such as React, Node.js, TypeScript, or Python.",
+  "Respond with only the exact skill name or the word none.",
+  "Do not explain your choice."
+].join(" ");
 
 export interface CompletionInput {
   systemPrompt: string;
@@ -42,14 +52,7 @@ export function createAnthropicService(modelOverride?: string): CompletionServic
       const response = await client.messages.create({
         model,
         max_tokens: 32,
-        system: [
-          "You are selecting one agent skill for a user request.",
-          "You will be given a list of available skills by name and description.",
-          "Choose the single best skill for the latest user request, or choose none if no skill clearly fits.",
-          "If the latest request is about being new to the project, codebase, repo, or repository, or asks what to do first or how to get started, choose welcome-me when that skill is available.",
-          "Respond with only the exact skill name or the word none.",
-          "Do not explain your choice."
-        ].join(" "),
+        system: SKILL_SELECTION_SYSTEM_PROMPT,
         messages: [
           ...input.history.map((message) => ({
             role: message.role,
