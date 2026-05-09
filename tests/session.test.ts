@@ -75,6 +75,56 @@ Use the welcome skill body.`,
     expect(complete.mock.calls[0]?.[0].prompt).toContain("Use the welcome skill body.");
   });
 
+  it("persists selected skill metadata into later model-visible history", async () => {
+    const complete = vi
+      .fn<CompletionService["complete"]>()
+      .mockResolvedValueOnce("first response")
+      .mockResolvedValueOnce("second response");
+    const selectSkill = vi
+      .fn<CompletionService["selectSkill"]>()
+      .mockResolvedValueOnce("welcome-me")
+      .mockResolvedValueOnce("none");
+
+    const session = new AgentSession(
+      {
+        roots: [],
+        skills: [
+          {
+            name: "welcome-me",
+            description: "Help newcomers get started.",
+            filePath: "/tmp/welcome-me/SKILL.md",
+            rootPath: "/tmp"
+          }
+        ]
+      } satisfies SkillCatalog,
+      { complete, selectSkill }
+    );
+
+    const loadSkillContentSpy = vi.spyOn(await import("../src/skills.js"), "loadSkillContent");
+    loadSkillContentSpy.mockResolvedValue({
+      name: "welcome-me",
+      description: "Help newcomers get started.",
+      filePath: "/tmp/welcome-me/SKILL.md",
+      rootPath: "/tmp",
+      content: "Skill body"
+    });
+
+    await session.submitTurn({ input: "I am new to this project", selectedSkillName: "welcome-me" });
+    await session.submitTurn({ input: "what skills have you loaded so far?", selectedSkillName: "none" });
+
+    const secondCallHistory = complete.mock.calls[1]?.[0].history ?? [];
+    expect(secondCallHistory).toEqual(
+      expect.arrayContaining([
+        {
+          role: "assistant",
+          content: expect.stringContaining("selected_skill: welcome-me")
+        }
+      ])
+    );
+
+    loadSkillContentSpy.mockRestore();
+  });
+
   it("returns none when the llm chooses no skill", async () => {
     const session = new AgentSession(
       {

@@ -48,6 +48,10 @@ export class AgentSession {
     });
 
     this.history.push({ role: "user", content: trimmedInput });
+    this.history.push({
+      role: "assistant",
+      content: buildSkillHistoryEntry(selectedSkill?.name ?? "none")
+    });
     this.history.push({ role: "assistant", content: reply });
 
     return {
@@ -125,5 +129,13 @@ export function buildPrompt(input: string, skill: Pick<SkillSummary, "name" | "d
     "<user_request>",
     input,
     "</user_request>"
+  ].join("\n");
+}
+
+function buildSkillHistoryEntry(skillName: string): string {
+  return [
+    "<turn_metadata>",
+    `selected_skill: ${skillName}`,
+    "</turn_metadata>"
   ].join("\n");
 }
