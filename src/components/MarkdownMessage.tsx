@@ -102,7 +102,7 @@ function renderBlock(block: MarkdownBlock, index: number): React.ReactNode {
       );
     case "blockquote":
       return (
-        <Text color="gray">
+        <Text color="white" bold>
           <Text color="cyan">&gt; </Text>
           {renderInline(block.text)}
         </Text>

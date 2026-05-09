@@ -18,7 +18,11 @@ export function MessageList(props: {
 }) {
   return (
     <Box flexDirection="column">
-      {props.turns.length === 0 ? <Text color="gray">No messages yet.</Text> : null}
+      {props.turns.length === 0 ? (
+        <Box marginTop={1} marginBottom={1}>
+          <Text color="gray">No messages yet.</Text>
+        </Box>
+      ) : null}
       {props.turns.map((turn) => (
         <Box key={turn.id} flexDirection="column" marginBottom={2}>
           <Text color="cyan">

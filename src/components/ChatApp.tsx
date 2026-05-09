@@ -110,17 +110,6 @@ export function ChatApp(props: {
       <Box>
         <Text color="gray">{divider}</Text>
       </Box>
-
-      <Box justifyContent="space-between" marginTop={1}>
-        <Text color="gray">? for shortcuts</Text>
-        {statusSkill && statusSkill !== "none" ? (
-          <Text color="gray">
-            skill <Text color="cyan">{statusSkill}</Text>
-          </Text>
-        ) : (
-          <Text color="gray"> </Text>
-        )}
-      </Box>
     </Box>
   );
 }
