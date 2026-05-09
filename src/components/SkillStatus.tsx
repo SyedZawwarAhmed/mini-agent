@@ -8,7 +8,7 @@ export function SkillStatus(props: { skillName: string }) {
 
   return (
     <Box marginTop={1} marginBottom={1}>
-      <Text color="gray">  [skill] </Text>
+      <Text color="gray">  [skill used] </Text>
       <Text color="cyan">{props.skillName}</Text>
     </Box>
   );

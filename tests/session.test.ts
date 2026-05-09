@@ -20,13 +20,12 @@ describe("session prompt assembly", () => {
   it("injects only the selected skill body", () => {
     const prompt = buildPrompt("Help me get started", {
       name: "welcome-me",
-      description: "Help newcomers get started.",
-      content: "Skill body"
+      description: "Help newcomers get started."
     });
 
     expect(prompt).toContain("<selected_skill>");
     expect(prompt).toContain("name: welcome-me");
-    expect(prompt).toContain("Skill body");
+    expect(prompt).not.toContain("Skill body");
   });
 
   it("leaves the prompt untouched when no skill is selected", () => {
@@ -72,7 +71,7 @@ Use the welcome skill body.`,
     expect(selectSkill).toHaveBeenCalledTimes(1);
     expect(result.skillName).toBe("welcome-me");
     expect(complete).toHaveBeenCalledTimes(1);
-    expect(complete.mock.calls[0]?.[0].prompt).toContain("Use the welcome skill body.");
+    expect(complete.mock.calls[0]?.[0].systemPrompt).toContain("Use the welcome skill body.");
   });
 
   it("persists selected skill metadata into later hidden system context", async () => {
@@ -114,6 +113,8 @@ Use the welcome skill body.`,
 
     const secondSystemPrompt = complete.mock.calls[1]?.[0].systemPrompt ?? "";
     const secondCallHistory = complete.mock.calls[1]?.[0].history ?? [];
+    expect(secondSystemPrompt).toContain("<loaded_skills>");
+    expect(secondSystemPrompt).toContain("name: welcome-me");
     expect(secondSystemPrompt).toContain("<skill_history>");
     expect(secondSystemPrompt).toContain("turn_1: selected_skill=welcome-me");
     expect(secondCallHistory).not.toEqual(
@@ -125,6 +126,47 @@ Use the welcome skill body.`,
       ])
     );
 
+    loadSkillContentSpy.mockRestore();
+  });
+
+  it("does not reload the same skill twice in one session", async () => {
+    const complete = vi
+      .fn<CompletionService["complete"]>()
+      .mockResolvedValueOnce("first response")
+      .mockResolvedValueOnce("second response");
+    const selectSkill = vi
+      .fn<CompletionService["selectSkill"]>()
+      .mockResolvedValueOnce("welcome-me")
+      .mockResolvedValueOnce("welcome-me");
+
+    const session = new AgentSession(
+      {
+        roots: [],
+        skills: [
+          {
+            name: "welcome-me",
+            description: "Help newcomers get started.",
+            filePath: "/tmp/welcome-me/SKILL.md",
+            rootPath: "/tmp"
+          }
+        ]
+      } satisfies SkillCatalog,
+      { complete, selectSkill }
+    );
+
+    const loadSkillContentSpy = vi.spyOn(await import("../src/skills.js"), "loadSkillContent");
+    loadSkillContentSpy.mockResolvedValue({
+      name: "welcome-me",
+      description: "Help newcomers get started.",
+      filePath: "/tmp/welcome-me/SKILL.md",
+      rootPath: "/tmp",
+      content: "Skill body"
+    });
+
+    await session.submitTurn({ input: "I am new to this project", selectedSkillName: "welcome-me" });
+    await session.submitTurn({ input: "I am still new here", selectedSkillName: "welcome-me" });
+
+    expect(loadSkillContentSpy).toHaveBeenCalledTimes(1);
     loadSkillContentSpy.mockRestore();
   });
 
