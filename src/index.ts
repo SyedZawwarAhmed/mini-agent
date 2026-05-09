@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import "dotenv/config";
 import { Command } from "commander";
 import { runInteractiveCli } from "./cli.js";
 import { runPrintMode } from "./session.js";
@@ -32,7 +33,11 @@ program
     });
   });
 
-program.parseAsync(process.argv).catch((error: unknown) => {
+async function main(): Promise<void> {
+  await program.parseAsync(process.argv);
+}
+
+main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(message);
   process.exitCode = 1;

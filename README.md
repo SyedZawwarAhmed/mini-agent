@@ -23,7 +23,14 @@ Install dependencies:
 npm install
 ```
 
-Set your Anthropic API key:
+Set your Anthropic API key in either your shell environment or a repo-root `.env` file:
+
+Example `.env`:
+
+```env
+ANTHROPIC_API_KEY=your_key_here
+ANTHROPIC_MODEL=claude-sonnet-4-5
+```
 
 ```bash
 export ANTHROPIC_API_KEY=your_key_here
