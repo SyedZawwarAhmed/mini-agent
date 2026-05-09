@@ -8,6 +8,7 @@ export const SKILL_SELECTION_SYSTEM_PROMPT = [
   "Choose the single best skill for the latest user request, or choose none if no skill clearly fits.",
   "Base the choice on the latest request, the prior chat history, and the provided skill metadata.",
   "Only choose a skill when the request is clearly asking for the kind of help described by that skill.",
+  "If the latest request is about being new to the current project, repo, repository, codebase, or team, or asks how to get started here, prefer the skill whose metadata is about greeting or welcoming new users.",
   "Do not choose a project-onboarding skill for general learning requests about a technology, framework, language, or topic such as React, Node.js, TypeScript, or Python.",
   "Respond with only the exact skill name or the word none.",
   "Do not explain your choice."
@@ -64,6 +65,7 @@ export function createAnthropicService(modelOverride?: string): CompletionServic
       const response = await client.messages.create({
         model,
         max_tokens: 32,
+        temperature: 0,
         system: SKILL_SELECTION_SYSTEM_PROMPT,
         messages: [
           ...toAnthropicMessages(input.history),
