@@ -173,6 +173,6 @@ Example prompts:
 
 ```bash
 I'm new to this project, what should I do?
-Can you review this function for readability and bugs?
+Can you review a function for readability and bugs?
 Help me brainstorm a clean API for a note-taking app.
 ```
