@@ -1,16 +1,29 @@
 # Mini Agent
 
-A small TypeScript CLI coding agent with local `SKILL.md`-based skill activation.
+A small TypeScript CLI coding agent with local `SKILL.md` skills, an Ink-based interactive UI, and Anthropic-powered responses.
+
+## What It Does
+
+- Discovers bundled skills from repo-root `.skills/`
+- Uses the model to choose the best matching skill for each turn
+- Loads full skill instructions the first time a skill is used in a session
+- Keeps loaded skill instructions in hidden session context for later turns
+- Supports both interactive chat and one-shot print mode
+
+Current bundled skills:
+- `welcome-me`
+- `brainstorming`
+- `receiving-code-review`
 
 ## Setup
 
-1. Install dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. Set your Anthropic API key:
+Set your Anthropic API key:
 
 ```bash
 export ANTHROPIC_API_KEY=your_key_here
@@ -20,6 +33,12 @@ On Windows PowerShell:
 
 ```powershell
 $env:ANTHROPIC_API_KEY="your_key_here"
+```
+
+Optional model override:
+
+```bash
+export ANTHROPIC_MODEL=claude-sonnet-4-5
 ```
 
 ## Run
@@ -39,25 +58,95 @@ npm run dev -- "I'm new to this project, what should I do?"
 Single-shot print mode:
 
 ```bash
-npm run dev -- --print "Review this JavaScript function for readability and bugs."
+npm run dev -- --print "Can you review this code?"
 ```
 
-The interactive UI shows which skill matched on each turn, or `none` when nothing matched.
+## UI Notes
 
-## Bundled Skills
+- The interactive UI shows the app name, model, and current working directory.
+- When a skill is used, the transcript shows an inline badge like `[skill used] welcome-me`.
+- If no skill is used, no skill badge is shown.
+- The `welcome-me` header is rendered prominently rather than dimmed.
 
-This repo includes bundled skills under `.skills/`:
+## Skills
 
-- `welcome-me`
-- `brainstorming`
-- `receiving-code-review`
+Bundled skills live under `.skills/`:
+
+- `.skills/welcome-me/SKILL.md`
+- `.skills/brainstorming/SKILL.md`
+- `.skills/receiving-code-review/SKILL.md`
+
+### `welcome-me`
+
+Used for onboarding-style prompts such as:
+- "I'm new to this project, what should I do?"
+- "I am new to this codebase"
+- "just joined the team, where do I start"
+
+When selected, it must include this exact line:
+
+> Welcome to our Command Code assignment agent!
+
+### `brainstorming`
+
+Used for idea generation, product thinking, and open-ended exploration prompts.
+
+### `receiving-code-review`
+
+Used for code review, feedback, correctness, maintainability, and quality-focused prompts.
+
+## How Skill Selection Works
+
+Skill selection is LLM-driven.
+
+For each turn, the app sends:
+- the latest user request
+- prior visible chat history
+- available skill names and descriptions
+
+The model chooses one skill name or `none`.
+
+If a skill is selected:
+- its full `SKILL.md` is loaded into hidden system context the first time it is used
+- it remains available for later turns in the same session
+- hard requirements from that skill should still be followed on later turns
+
+## Development
+
+Typecheck:
+
+```bash
+npm run typecheck
+```
+
+Build:
+
+```bash
+npm run build
+```
+
+Tests:
+
+```bash
+npm run test
+```
 
 ## Demo Instructions
 
-Run the CLI with one of these prompts:
+Use any of these prompts:
 
 ```bash
 npm run dev -- "I'm new to this project, what should I do?"
-npm run dev -- --print "Review this JavaScript function for readability and bugs."
-npm run dev -- --print "What's the weather in Karachi?"
+npm run dev -- --print "Review this function for readability and bugs."
+npm run dev -- --print "Help me brainstorm a clean API for a note-taking app."
 ```
+
+## Time Spent
+
+Fill this in before submission.
+
+## Challenges
+
+- Getting skill selection and session behavior aligned with the intended UX without overbuilding a full agent runtime
+- Preserving prior skill usage in hidden context so the model can answer questions about earlier turns
+- Tuning the Ink UI to feel closer to the desired terminal style while keeping the implementation small
